@@ -783,6 +783,10 @@
     }
 
 
+
+    /* TELA REGISTRAR REFEIÇÃO */
+    #telaRefeicao{display:none;min-height:100vh;background:#f7f5ef}.pagina-interna{width:min(760px,90%);margin:auto;padding:36px 0 60px}.voltar-home{border:0;background:transparent;color:var(--verde);font-weight:600;cursor:pointer;margin-bottom:20px}.cabecalho-interno h2{font-size:30px;margin-bottom:7px}.cabecalho-interno p{color:#706b63;font-size:14px;margin-bottom:25px}.form-card{background:#fff;border:1px solid #ebe7df;border-radius:20px;padding:26px;box-shadow:0 8px 25px rgba(35,70,57,.05)}.form-card select,.form-card textarea{width:100%;border:1px solid var(--borda);border-radius:10px;padding:13px 14px;font-size:14px;background:#fff}.form-card select{height:49px}.form-card textarea{min-height:105px;resize:vertical}.upload-foto{border:1.5px dashed #b8c9c0;border-radius:14px;padding:22px;text-align:center;background:#fafcfb;cursor:pointer;display:block}.upload-foto strong{display:block;color:var(--verde-escuro);margin:7px 0 4px}.upload-foto small{color:#81796e}.upload-foto input{display:none}#previewRefeicao,#previewPesagem{display:none;width:100%;max-height:330px;object-fit:cover;border-radius:14px;margin-top:14px}.acoes-form{display:flex;gap:12px}.botao-secundario{width:100%;height:50px;border:1px solid #b9cdc3;border-radius:10px;background:#fff;color:var(--verde);font-weight:600;cursor:pointer}
+
     /* ==========================================
        RESPONSIVO
     ========================================== */
@@ -1403,11 +1407,7 @@
 
       <button
         class="acao-card"
-        onclick="abrirFuncao(
-          '🍽️',
-          'Registrar refeição',
-          'Aqui você poderá enviar a foto da refeição, informar o tipo da refeição, o peso da comida e adicionar observações.'
-        )"
+        onclick="abrirTelaRefeicao()"
       >
 
         <span class="icone-acao">
@@ -1438,11 +1438,7 @@
 
       <button
         class="acao-card"
-        onclick="abrirFuncao(
-          '⚖️',
-          'Peso semanal',
-          'Aqui você poderá registrar seu peso semanal e enviar a foto da balança.'
-        )"
+        onclick="abrirTelaPesagem()"
       >
 
         <span class="icone-acao">
@@ -1473,11 +1469,7 @@
 
       <button
         class="acao-card"
-        onclick="abrirFuncao(
-          '🥗',
-          'Meu cardápio',
-          'Aqui ficará disponível o seu plano alimentar enviado pelo profissional.'
-        )"
+        onclick="abrirTelaCardapio()"
       >
 
         <span class="icone-acao">
@@ -1508,11 +1500,7 @@
 
       <button
         class="acao-card"
-        onclick="abrirFuncao(
-          '📈',
-          'Minha evolução',
-          'Aqui você poderá acompanhar seu histórico de peso, refeições e evolução durante o acompanhamento.'
-        )"
+        onclick="abrirTelaEvolucao()"
       >
 
         <span class="icone-acao">
@@ -1547,6 +1535,18 @@
 </section>
 
 
+
+
+<!-- REGISTRAR REFEIÇÃO -->
+<section id="telaRefeicao"><header class="topo-paciente"><div class="marca-home"><div class="logo-home">🌿</div><div><h1>FERRANCO</h1><span>NUTRIÇÃO & SAÚDE</span></div></div><button class="botao-sair" onclick="sair()">Sair</button></header><main class="pagina-interna"><button class="voltar-home" onclick="voltarHome()">← Voltar para o início</button><div class="cabecalho-interno"><h2>🍽️ Registrar refeição</h2><p>Envie as informações da sua refeição para acompanhamento.</p></div><div id="mensagemRefeicao" class="mensagem"></div><div class="form-card">
+<div class="campo"><label>Tipo da refeição</label><select id="refTipo"><option value="">Selecione</option><option>Café da manhã</option><option>Lanche da manhã</option><option>Almoço</option><option>Lanche da tarde</option><option>Jantar</option><option>Ceia</option><option>Outro</option></select></div>
+<div class="campo"><label>Foto da refeição</label><label class="upload-foto" for="refFoto"><span style="font-size:30px">📷</span><strong>Adicionar foto</strong><small>Escolha ou tire uma foto</small><input id="refFoto" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onchange="mostrarPreviewRefeicao(event)"></label><img id="previewRefeicao" alt="Prévia"></div>
+<div class="campo"><label>Peso da comida (gramas)</label><input type="number" id="refPeso" min="1" step="1" placeholder="Ex.: 350"></div><div class="campo"><label>Observação (opcional)</label><textarea id="refObservacao" placeholder="Ex.: comi tudo, deixei parte da refeição..."></textarea></div><div class="acoes-form"><button class="botao-secundario" onclick="voltarHome()">Cancelar</button><button class="botao" id="btnEnviarRefeicao" onclick="enviarRefeicao()">Enviar refeição</button></div></div></main></section>
+
+<!-- TELAS: PESAGEM / CARDÁPIO / EVOLUÇÃO -->
+<section id="telaPesagem" style="display:none;min-height:100vh;background:#f7f5ef"><header class="topo-paciente"><div class="marca-home"><div class="logo-home">🌿</div><div><h1>FERRANCO</h1><span>NUTRIÇÃO & SAÚDE</span></div></div><button class="botao-sair" onclick="sair()">Sair</button></header><main class="pagina-interna"><button class="voltar-home" onclick="voltarHome()">← Voltar para o início</button><div class="cabecalho-interno"><h2>⚖️ Peso semanal</h2><p>Registre seu peso e envie a foto da balança.</p></div><div id="mensagemPesagem" class="mensagem"></div><div class="form-card"><div class="campo"><label>Peso atual (kg)</label><input id="pesoSemanal" type="number" min="1" step="0.1" placeholder="Ex.: 72,5"></div><div class="campo"><label class="upload-foto">📷<strong>Foto da balança</strong><small>JPG, PNG ou WEBP — até 10 MB</small><input id="fotoPesagem" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onchange="previewFotoPesagem(event)"></label><img id="previewPesagem"></div><div class="campo"><label>Observação</label><textarea id="obsPesagem" placeholder="Opcional"></textarea></div><div class="acoes-form"><button class="botao-secundario" onclick="voltarHome()">Cancelar</button><button class="botao" id="btnPesagem" onclick="enviarPesagem()">Salvar peso</button></div></div></main></section>
+<section id="telaCardapio" style="display:none;min-height:100vh;background:#f7f5ef"><header class="topo-paciente"><div class="marca-home"><div class="logo-home">🌿</div><div><h1>FERRANCO</h1><span>NUTRIÇÃO & SAÚDE</span></div></div><button class="botao-sair" onclick="sair()">Sair</button></header><main class="pagina-interna"><button class="voltar-home" onclick="voltarHome()">← Voltar para o início</button><div class="cabecalho-interno"><h2>🥗 Meu cardápio</h2><p>Seu plano alimentar disponível no acompanhamento.</p></div><div id="conteudoCardapio" class="form-card">Carregando...</div></main></section>
+<section id="telaEvolucao" style="display:none;min-height:100vh;background:#f7f5ef"><header class="topo-paciente"><div class="marca-home"><div class="logo-home">🌿</div><div><h1>FERRANCO</h1><span>NUTRIÇÃO & SAÚDE</span></div></div><button class="botao-sair" onclick="sair()">Sair</button></header><main class="pagina-interna"><button class="voltar-home" onclick="voltarHome()">← Voltar para o início</button><div class="cabecalho-interno"><h2>📈 Minha evolução</h2><p>Acompanhe seus registros e seu progresso.</p></div><div class="form-card" style="margin-bottom:16px"><h3 style="margin-bottom:15px">⚖️ Histórico de peso</h3><div id="listaPesagens">Carregando...</div></div><div class="form-card"><h3 style="margin-bottom:15px">🍽️ Últimas refeições</h3><div id="listaRefeicoes">Carregando...</div></div></main></section>
 
 <!-- ==========================================
      MODAL
@@ -2444,6 +2444,8 @@
 
   async function sair() {
 
+    esconderTelasInternas();
+
 
     await supabaseClient
       .auth
@@ -2506,6 +2508,8 @@
 
   function mostrarTelaAcesso() {
 
+    esconderTelasInternas();
+
 
     document
       .getElementById(
@@ -2540,6 +2544,24 @@
 
   }
 
+
+
+
+  /* REGISTRAR REFEIÇÃO */
+  function abrirTelaRefeicao(){limparMensagem('mensagemRefeicao');document.getElementById('telaPaciente').style.display='none';document.getElementById('telaRefeicao').style.display='block';window.scrollTo(0,0)}
+  function voltarHome(){['telaRefeicao','telaPesagem','telaCardapio','telaEvolucao'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none'});document.getElementById('telaPaciente').style.display='block';window.scrollTo(0,0)}
+  function mostrarPreviewRefeicao(e){const a=e.target.files&&e.target.files[0],p=document.getElementById('previewRefeicao');if(!a){p.style.display='none';return}if(!['image/jpeg','image/png','image/webp'].includes(a.type)||a.size>10*1024*1024){e.target.value='';mostrarMensagem('mensagemRefeicao','Use uma foto JPG, PNG ou WEBP de até 10 MB.','erro');return}p.src=URL.createObjectURL(a);p.style.display='block'}
+  async function enviarRefeicao(){limparMensagem('mensagemRefeicao');const tipo=document.getElementById('refTipo').value,peso=document.getElementById('refPeso').value,obs=document.getElementById('refObservacao').value.trim(),foto=document.getElementById('refFoto').files[0],btn=document.getElementById('btnEnviarRefeicao');if(!tipo||!peso||!foto){mostrarMensagem('mensagemRefeicao','Preencha o tipo, o peso da comida e adicione a foto.','erro');return}btn.disabled=true;btn.textContent='Enviando...';let caminho=null;try{const{data:{user}}=await supabaseClient.auth.getUser();if(!user)throw new Error('Sua sessão expirou. Entre novamente.');const{data:pid,error:ep}=await supabaseClient.rpc('meu_paciente_id');if(ep||!pid)throw new Error('Não foi possível identificar seu cadastro.');const ext=(foto.name.split('.').pop()||'jpg').toLowerCase(),id=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2));caminho=`${user.id}/refeicoes/${Date.now()}-${id}.${ext}`;const{error:eu}=await supabaseClient.storage.from('ferranco-arquivos').upload(caminho,foto,{upsert:false,contentType:foto.type});if(eu)throw eu;const{error:ei}=await supabaseClient.from('refeicoes').insert({paciente_id:pid,tipo_refeicao:tipo,peso_comida_gramas:Number(peso),foto_path:caminho,observacao_paciente:obs||null,status_avaliacao:'PENDENTE'});if(ei){await supabaseClient.storage.from('ferranco-arquivos').remove([caminho]);throw ei}mostrarMensagem('mensagemRefeicao','Refeição enviada com sucesso! 🌿','sucesso');['refTipo','refPeso','refObservacao','refFoto'].forEach(id=>document.getElementById(id).value='');document.getElementById('previewRefeicao').style.display='none';setTimeout(voltarHome,1200)}catch(e){console.error(e);mostrarMensagem('mensagemRefeicao',e.message||'Não foi possível enviar a refeição.','erro')}finally{btn.disabled=false;btn.textContent='Enviar refeição'}}
+
+
+  function esconderTelasInternas(){['telaRefeicao','telaPesagem','telaCardapio','telaEvolucao'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none'});}
+  function abrirTelaPesagem(){esconderTelasInternas();document.getElementById('telaPaciente').style.display='none';document.getElementById('telaPesagem').style.display='block';limparMensagem('mensagemPesagem');window.scrollTo(0,0)}
+  function previewFotoPesagem(e){const f=e.target.files[0],img=document.getElementById('previewPesagem');if(!f){img.style.display='none';return}if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>10*1024*1024){alert('Use uma imagem JPG, PNG ou WEBP de até 10 MB.');e.target.value='';img.style.display='none';return}img.src=URL.createObjectURL(f);img.style.display='block'}
+  async function enviarPesagem(){const peso=Number(document.getElementById('pesoSemanal').value),foto=document.getElementById('fotoPesagem').files[0],obs=document.getElementById('obsPesagem').value.trim();if(!peso||peso<=0||!foto){mostrarMensagem('mensagemPesagem','Informe o peso e envie a foto da balança.','erro');return}const btn=document.getElementById('btnPesagem');btn.disabled=true;btn.textContent='Salvando...';try{const {data:{user}}=await supabaseClient.auth.getUser();if(!user)throw new Error('Sessão encerrada. Entre novamente.');const {data:pid,error:pe}=await supabaseClient.rpc('meu_paciente_id');if(pe||!pid)throw pe||new Error('Paciente não encontrado.');const ext=(foto.name.split('.').pop()||'jpg').toLowerCase();const path=`${user.id}/pesagens/${Date.now()}-${crypto.randomUUID()}.${ext}`;const {error:ue}=await supabaseClient.storage.from('ferranco-arquivos').upload(path,foto);if(ue)throw ue;const {error:ie}=await supabaseClient.from('pesagens').insert({paciente_id:pid,peso_kg:peso,foto_path:path,observacao_paciente:obs||null,status_avaliacao:'PENDENTE'});if(ie){await supabaseClient.storage.from('ferranco-arquivos').remove([path]);throw ie}mostrarMensagem('mensagemPesagem','Peso registrado com sucesso!','sucesso');document.getElementById('pesoPaciente').textContent=formatarPeso(peso);setTimeout(voltarHome,1000)}catch(e){console.error(e);mostrarMensagem('mensagemPesagem',String(e.message||'Não foi possível salvar a pesagem.'),'erro')}finally{btn.disabled=false;btn.textContent='Salvar peso'}}
+  async function abrirTelaCardapio(){esconderTelasInternas();document.getElementById('telaPaciente').style.display='none';document.getElementById('telaCardapio').style.display='block';window.scrollTo(0,0);const box=document.getElementById('conteudoCardapio');box.innerHTML='Carregando...';try{const {data:pid,error:pe}=await supabaseClient.rpc('meu_paciente_id');if(pe||!pid)throw pe||new Error('Paciente não encontrado.');const {data,error}=await supabaseClient.from('cardapios').select('titulo,descricao,data_inicio,data_fim,arquivo_path').eq('paciente_id',pid).eq('ativo',true).order('criado_em',{ascending:false}).limit(1);if(error)throw error;if(!data||!data.length){box.innerHTML='<strong>Nenhum cardápio disponível no momento.</strong><p style="margin-top:8px;color:#6d746f">Quando o profissional disponibilizar seu plano alimentar, ele aparecerá aqui.</p>';return}const c=data[0];box.innerHTML=`<h3>${esc(c.titulo||'Plano alimentar')}</h3>${c.descricao?`<p style="white-space:pre-wrap;margin-top:12px;line-height:1.6">${esc(c.descricao)}</p>`:''}${c.data_inicio?`<p style="margin-top:14px;color:#6d746f">Início: ${dataBR(c.data_inicio)}${c.data_fim?' • até '+dataBR(c.data_fim):''}</p>`:''}`;}catch(e){console.error(e);box.textContent='Não foi possível carregar seu cardápio.'}}
+  async function abrirTelaEvolucao(){esconderTelasInternas();document.getElementById('telaPaciente').style.display='none';document.getElementById('telaEvolucao').style.display='block';window.scrollTo(0,0);const lp=document.getElementById('listaPesagens'),lr=document.getElementById('listaRefeicoes');lp.textContent='Carregando...';lr.textContent='Carregando...';try{const {data:pid,error:pe}=await supabaseClient.rpc('meu_paciente_id');if(pe||!pid)throw pe||new Error('Paciente não encontrado.');const [{data:ps,error:e1},{data:rs,error:e2}]=await Promise.all([supabaseClient.from('pesagens').select('data_pesagem,peso_kg,status_avaliacao').eq('paciente_id',pid).order('data_pesagem',{ascending:false}).limit(12),supabaseClient.from('refeicoes').select('data_hora,tipo_refeicao,peso_comida_gramas,status_avaliacao').eq('paciente_id',pid).order('data_hora',{ascending:false}).limit(15)]);if(e1)throw e1;if(e2)throw e2;lp.innerHTML=ps&&ps.length?ps.map(x=>`<div style="padding:12px 0;border-bottom:1px solid #eee"><strong>${formatarPeso(x.peso_kg)}</strong><br><small>${dataBR(x.data_pesagem)} • ${esc(x.status_avaliacao)}</small></div>`).join(''):'Nenhuma pesagem registrada.';lr.innerHTML=rs&&rs.length?rs.map(x=>`<div style="padding:12px 0;border-bottom:1px solid #eee"><strong>${esc(x.tipo_refeicao)}</strong>${x.peso_comida_gramas?' • '+esc(x.peso_comida_gramas)+' g':''}<br><small>${new Date(x.data_hora).toLocaleString('pt-BR')} • ${esc(x.status_avaliacao)}</small></div>`).join(''):'Nenhuma refeição registrada.';}catch(e){console.error(e);lp.textContent='Não foi possível carregar.';lr.textContent='Não foi possível carregar.'}}
+  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function dataBR(v){if(!v)return '';const a=String(v).slice(0,10).split('-');return a.length===3?`${a[2]}/${a[1]}/${a[0]}`:v}
 
 
   /* ==========================================

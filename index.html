@@ -2614,12 +2614,54 @@
 
   async function abrirAreaCorreta(){
     try{
-      const {data:{user}}=await supabaseClient.auth.getUser();
-      if(!user){mostrarTelaAcesso();return;}
-      const {data:adm,error}=await supabaseClient.from('administradores').select('nome,ativo').eq('user_id',user.id).eq('ativo',true).maybeSingle();
-      if(!error && adm){await abrirAreaAdmin(adm);return;}
+      const { data: { user }, error: erroUsuario } = await supabaseClient.auth.getUser();
+
+      if (erroUsuario || !user) {
+        mostrarTelaAcesso();
+        return;
+      }
+
+      /*
+        Primeiro pergunta ao próprio Supabase se o usuário autenticado
+        é administrador. A função usuario_e_admin() já existe no banco
+        e usa auth.uid(), evitando depender da leitura direta da tabela
+        administradores para decidir a rota.
+      */
+      const { data: ehAdmin, error: erroAdmin } =
+        await supabaseClient.rpc('usuario_e_admin');
+
+      if (erroAdmin) {
+        console.error('Erro ao verificar administrador:', erroAdmin);
+        throw erroAdmin;
+      }
+
+      if (ehAdmin === true) {
+        let nomeAdmin = 'Dr. Elton';
+
+        const { data: adm } = await supabaseClient
+          .from('administradores')
+          .select('nome')
+          .eq('user_id', user.id)
+          .eq('ativo', true)
+          .maybeSingle();
+
+        if (adm && adm.nome) nomeAdmin = adm.nome;
+
+        await abrirAreaAdmin({ nome: nomeAdmin, ativo: true });
+        return;
+      }
+
       await abrirAreaPaciente();
-    }catch(e){console.error('Erro ao identificar perfil:',e);mostrarTelaAcesso();}
+
+    } catch (e) {
+      console.error('Erro ao identificar perfil:', e);
+      mostrarTelaAcesso();
+      mostrarMensagem(
+        'mensagemLogin',
+        'Não foi possível identificar o tipo de acesso. Tente novamente.',
+        'erro'
+      );
+    }
   }
 
   async function abrirAreaAdmin(adm){

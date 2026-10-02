@@ -841,50 +841,109 @@
   /* ==========================================
      LOGIN
   ========================================== */
+async function entrar() {
 
-  async function entrar() {
+  const cpf = somenteNumeros(
+    document.getElementById("loginCpf").value
+  );
 
-    const cpf =
-      somenteNumeros(
-        document.getElementById("loginCpf").value
+  const senha =
+    document.getElementById("loginSenha").value;
+
+  if (cpf.length !== 11 || !senha) {
+
+    mostrarMensagem(
+      "mensagemLogin",
+      "Informe seu CPF e sua senha.",
+      "erro"
+    );
+
+    return;
+  }
+
+  mostrarMensagem(
+    "mensagemLogin",
+    "Entrando...",
+    "sucesso"
+  );
+
+  try {
+
+    // Busca o e-mail vinculado ao CPF
+    const { data: email, error: erroCpf } =
+      await supabaseClient.rpc(
+        "buscar_email_login_cpf",
+        {
+          p_cpf: cpf
+        }
       );
 
-    const senha =
-      document.getElementById("loginSenha").value;
+    if (erroCpf) {
+      throw erroCpf;
+    }
 
-
-    if (
-      cpf.length !== 11 ||
-      !senha
-    ) {
+    if (!email) {
 
       mostrarMensagem(
         "mensagemLogin",
-        "Informe seu CPF e sua senha.",
+        "CPF ou senha incorretos.",
         "erro"
       );
 
       return;
     }
 
+    // Faz o login no Supabase
+    const { data, error: erroLogin } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: senha
+      });
 
-    /*
-      Na próxima etapa vamos criar uma função
-      segura no banco para localizar o login
-      através do CPF.
+    if (erroLogin) {
 
-      Por enquanto deixamos a interface pronta.
-    */
+      mostrarMensagem(
+        "mensagemLogin",
+        "CPF ou senha incorretos.",
+        "erro"
+      );
+
+      return;
+    }
+
+    if (!data.user) {
+
+      mostrarMensagem(
+        "mensagemLogin",
+        "Não foi possível acessar sua conta.",
+        "erro"
+      );
+
+      return;
+    }
 
     mostrarMensagem(
       "mensagemLogin",
-      "Estamos preparando seu acesso...",
+      "Login realizado com sucesso!",
       "sucesso"
+    );
+
+    console.log("Usuário conectado:", data.user.id);
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    mostrarMensagem(
+      "mensagemLogin",
+      "Não foi possível realizar o login. Tente novamente.",
+      "erro"
     );
 
   }
 
-
+}
+  
   /* ==========================================
      ESQUECI A SENHA
   ========================================== */

@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Ferranco | Área do Paciente</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -29,6 +36,7 @@
 
     body {
       min-height: 100vh;
+
       background:
         linear-gradient(
           135deg,
@@ -40,33 +48,50 @@
       color: var(--texto);
     }
 
+    button,
+    input {
+      font-family: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+
+    /* ==========================================
+       LOGIN / CADASTRO
+    ========================================== */
+
     .pagina {
       min-height: 100vh;
       display: flex;
     }
 
-    /* ==============================
-       LADO ESQUERDO
-    ============================== */
-
     .apresentacao {
       width: 55%;
       min-height: 100vh;
       padding: 60px 8%;
+
       display: flex;
       flex-direction: column;
       justify-content: center;
+
       position: relative;
       overflow: hidden;
     }
 
     .apresentacao::before {
       content: "";
+
       position: absolute;
+
       width: 420px;
       height: 420px;
+
       border-radius: 50%;
-      background: rgba(31,107,79,.08);
+
+      background: rgba(31, 107, 79, .08);
+
       left: -160px;
       bottom: -160px;
     }
@@ -75,18 +100,24 @@
       display: flex;
       align-items: center;
       gap: 15px;
+
       margin-bottom: 55px;
     }
 
     .logo {
       width: 58px;
       height: 58px;
+
       border-radius: 18px;
+
       background: var(--verde);
+
       color: white;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       font-size: 30px;
     }
 
@@ -98,16 +129,21 @@
 
     .marca span {
       display: block;
+
       font-size: 10px;
       letter-spacing: 3px;
+
       color: var(--cinza);
+
       margin-top: 5px;
     }
 
     .apresentacao h2 {
       font-size: 46px;
       line-height: 1.08;
+
       max-width: 600px;
+
       margin-bottom: 22px;
     }
 
@@ -118,58 +154,78 @@
     .apresentacao > p {
       font-size: 17px;
       line-height: 1.7;
+
       color: var(--cinza);
+
       max-width: 530px;
     }
 
     .beneficios {
       display: flex;
       gap: 18px;
-      margin-top: 40px;
       flex-wrap: wrap;
+
+      margin-top: 40px;
     }
 
     .beneficio {
-      background: rgba(255,255,255,.68);
-      border: 1px solid rgba(255,255,255,.9);
+      background: rgba(255, 255, 255, .68);
+
+      border: 1px solid rgba(255, 255, 255, .9);
+
       padding: 15px 18px;
+
       border-radius: 14px;
+
       font-size: 13px;
+
       color: var(--verde-escuro);
     }
 
-    /* ==============================
-       LOGIN
-    ============================== */
+
+    /* ==========================================
+       ÁREA LOGIN
+    ========================================== */
 
     .area-login {
       width: 45%;
       min-height: 100vh;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       padding: 40px;
     }
 
     .card {
       background: var(--branco);
+
       width: 100%;
       max-width: 440px;
+
       padding: 42px;
+
       border-radius: 25px;
-      box-shadow: 0 25px 70px rgba(26,65,50,.12);
-      border: 1px solid rgba(0,0,0,.04);
+
+      box-shadow:
+        0 25px 70px rgba(26, 65, 50, .12);
+
+      border: 1px solid rgba(0, 0, 0, .04);
     }
 
     .card h2 {
       font-size: 27px;
+
       margin-bottom: 8px;
     }
 
     .subtitulo {
       color: var(--cinza);
+
       font-size: 14px;
       line-height: 1.5;
+
       margin-bottom: 30px;
     }
 
@@ -179,89 +235,126 @@
 
     .campo label {
       display: block;
+
       font-size: 13px;
       font-weight: 600;
+
       margin-bottom: 7px;
     }
 
     .campo input {
       width: 100%;
       height: 49px;
+
       border: 1px solid var(--borda);
+
       border-radius: 10px;
+
       padding: 0 14px;
+
       outline: none;
+
       font-size: 14px;
+
       transition: .2s;
+
+      background: white;
     }
 
     .campo input:focus {
       border-color: var(--verde);
-      box-shadow: 0 0 0 3px rgba(31,107,79,.08);
+
+      box-shadow:
+        0 0 0 3px rgba(31, 107, 79, .08);
     }
 
     .botao {
       width: 100%;
       height: 50px;
+
       border: none;
+
       border-radius: 10px;
+
       background: var(--verde);
+
       color: white;
+
       font-size: 15px;
       font-weight: 600;
+
       cursor: pointer;
+
       transition: .2s;
     }
 
     .botao:hover {
       background: var(--verde-escuro);
+
       transform: translateY(-1px);
     }
 
     .links {
       text-align: center;
+
       margin-top: 23px;
     }
 
     .links button {
       border: none;
+
       background: none;
+
       color: var(--verde);
+
       font-size: 14px;
+
       cursor: pointer;
+
       text-decoration: underline;
     }
 
     .esqueci {
       margin-top: 14px;
+
       font-size: 12px !important;
+
       color: var(--cinza) !important;
     }
 
     .mensagem {
       display: none;
+
       margin-bottom: 18px;
+
       padding: 12px;
+
       border-radius: 9px;
+
       font-size: 13px;
       line-height: 1.4;
     }
 
     .mensagem.erro {
       display: block;
+
       background: #fdecec;
+
       color: #a32d2d;
     }
 
     .mensagem.sucesso {
       display: block;
+
       background: #e7f4ec;
+
       color: var(--verde);
     }
 
-    /* ==============================
+
+    /* ==========================================
        CADASTRO
-    ============================== */
+    ========================================== */
 
     #telaCadastro {
       display: none;
@@ -269,29 +362,430 @@
 
     .duas-colunas {
       display: grid;
+
       grid-template-columns: 1fr 1fr;
+
       gap: 13px;
     }
 
     .voltar {
       border: none;
+
       background: transparent;
+
       color: var(--verde);
+
       cursor: pointer;
+
       margin-bottom: 20px;
+
       font-size: 14px;
     }
 
     .termos {
       font-size: 11px;
+
       color: var(--cinza);
+
       line-height: 1.5;
+
       margin: 5px 0 18px;
     }
 
-    /* ==============================
+
+    /* ==========================================
+       HOME PACIENTE
+    ========================================== */
+
+    #telaPaciente {
+      display: none;
+
+      min-height: 100vh;
+
+      background: #f7f5ef;
+    }
+
+    .topo-paciente {
+      background: white;
+
+      border-bottom: 1px solid #e9e5dc;
+
+      min-height: 84px;
+
+      padding: 16px 6%;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      position: sticky;
+      top: 0;
+
+      z-index: 10;
+    }
+
+    .marca-home {
+      display: flex;
+      align-items: center;
+
+      gap: 12px;
+    }
+
+    .logo-home {
+      width: 45px;
+      height: 45px;
+
+      background: var(--verde);
+
+      border-radius: 14px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: white;
+
+      font-size: 23px;
+    }
+
+    .marca-home h1 {
+      font-size: 20px;
+
+      letter-spacing: 3px;
+
+      font-weight: 600;
+
+      color: var(--verde-escuro);
+    }
+
+    .marca-home span {
+      display: block;
+
+      color: #8a8174;
+
+      font-size: 9px;
+
+      letter-spacing: 2px;
+
+      margin-top: 3px;
+    }
+
+    .botao-sair {
+      border: 1px solid #b9cdc3;
+
+      background: white;
+
+      color: var(--verde);
+
+      border-radius: 10px;
+
+      padding: 10px 17px;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      cursor: pointer;
+    }
+
+    .botao-sair:hover {
+      background: var(--verde-claro);
+    }
+
+    .conteudo-paciente {
+      width: min(950px, 90%);
+
+      margin: auto;
+
+      padding: 42px 0 60px;
+    }
+
+    .boas-vindas {
+      margin-bottom: 28px;
+    }
+
+    .boas-vindas p {
+      color: #817a70;
+
+      font-size: 14px;
+
+      margin-bottom: 3px;
+    }
+
+    .boas-vindas h2 {
+      color: #18231f;
+
+      font-size: 31px;
+
+      margin-bottom: 8px;
+    }
+
+    .boas-vindas span {
+      color: #706b63;
+
+      font-size: 14px;
+    }
+
+    .resumo-paciente {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 16px;
+
+      margin-bottom: 38px;
+    }
+
+    .resumo-card {
+      background: white;
+
+      border: 1px solid #ebe7df;
+
+      border-radius: 18px;
+
+      padding: 20px;
+
+      display: flex;
+      align-items: center;
+
+      gap: 15px;
+
+      box-shadow:
+        0 8px 25px rgba(35, 70, 57, .05);
+    }
+
+    .icone-resumo {
+      width: 50px;
+      height: 50px;
+
+      min-width: 50px;
+
+      border-radius: 14px;
+
+      background: #edf5f0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 24px;
+    }
+
+    .resumo-card div:last-child {
+      display: flex;
+
+      flex-direction: column;
+    }
+
+    .resumo-card small {
+      color: #81796e;
+
+      margin-bottom: 4px;
+    }
+
+    .resumo-card strong {
+      color: var(--verde);
+
+      font-size: 18px;
+    }
+
+    .titulo-acoes {
+      font-size: 18px;
+
+      margin-bottom: 16px;
+
+      color: #18231f;
+    }
+
+    .acoes-paciente {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 16px;
+    }
+
+    .acao-card {
+      width: 100%;
+
+      min-height: 112px;
+
+      background: white;
+
+      border: 1px solid #ebe7df;
+
+      border-radius: 18px;
+
+      padding: 18px;
+
+      display: flex;
+      align-items: center;
+
+      gap: 15px;
+
+      text-align: left;
+
+      cursor: pointer;
+
+      transition: .2s;
+
+      box-shadow:
+        0 8px 25px rgba(35, 70, 57, .04);
+    }
+
+    .acao-card:hover {
+      transform: translateY(-2px);
+
+      border-color: #b8d0c4;
+
+      box-shadow:
+        0 12px 30px rgba(35, 70, 57, .08);
+    }
+
+    .icone-acao {
+      width: 50px;
+      height: 50px;
+
+      min-width: 50px;
+
+      border-radius: 14px;
+
+      background: #edf5f0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 23px;
+    }
+
+    .texto-acao {
+      display: flex;
+
+      flex-direction: column;
+
+      flex: 1;
+    }
+
+    .texto-acao strong {
+      color: #1c2924;
+
+      font-size: 15px;
+
+      margin-bottom: 5px;
+    }
+
+    .texto-acao small {
+      color: #81796e;
+
+      line-height: 1.4;
+
+      font-size: 12px;
+    }
+
+    .seta-acao {
+      color: var(--verde);
+
+      font-size: 25px;
+
+      font-weight: normal;
+    }
+
+
+    /* ==========================================
+       AVISO / MODAL TEMPORÁRIO
+    ========================================== */
+
+    .modal-fundo {
+      display: none;
+
+      position: fixed;
+
+      inset: 0;
+
+      background:
+        rgba(16, 30, 24, .45);
+
+      z-index: 100;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+    }
+
+    .modal {
+      background: white;
+
+      width: 100%;
+      max-width: 390px;
+
+      border-radius: 22px;
+
+      padding: 30px;
+
+      text-align: center;
+
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, .18);
+    }
+
+    .modal-icone {
+      width: 60px;
+      height: 60px;
+
+      border-radius: 18px;
+
+      background: var(--verde-claro);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin: 0 auto 18px;
+
+      font-size: 28px;
+    }
+
+    .modal h3 {
+      margin-bottom: 9px;
+
+      color: #1d2924;
+    }
+
+    .modal p {
+      color: var(--cinza);
+
+      line-height: 1.5;
+
+      font-size: 13px;
+
+      margin-bottom: 22px;
+    }
+
+    .modal button {
+      width: 100%;
+
+      height: 45px;
+
+      border: none;
+
+      border-radius: 10px;
+
+      background: var(--verde);
+
+      color: white;
+
+      font-weight: 600;
+
+      cursor: pointer;
+    }
+
+
+    /* ==========================================
        RESPONSIVO
-    ============================== */
+    ========================================== */
 
     @media(max-width: 850px) {
 
@@ -301,8 +795,11 @@
 
       .apresentacao {
         width: 100%;
+
         min-height: auto;
-        padding: 35px 25px 20px;
+
+        padding:
+          35px 25px 20px;
       }
 
       .marca {
@@ -323,57 +820,160 @@
 
       .area-login {
         width: 100%;
+
         min-height: auto;
-        padding: 20px 18px 40px;
+
+        padding:
+          20px 18px 40px;
       }
 
       .card {
         padding: 27px 22px;
+
         border-radius: 20px;
       }
+
+      .conteudo-paciente {
+        width:
+          calc(100% - 36px);
+
+        padding-top: 30px;
+      }
+
+      .acoes-paciente {
+        grid-template-columns: 1fr;
+      }
+
     }
+
+
+    @media(max-width: 600px) {
+
+      .topo-paciente {
+        min-height: 70px;
+
+        padding: 12px 18px;
+      }
+
+      .logo-home {
+        width: 40px;
+        height: 40px;
+
+        font-size: 20px;
+      }
+
+      .marca-home h1 {
+        font-size: 17px;
+
+        letter-spacing: 2px;
+      }
+
+      .marca-home span {
+        font-size: 8px;
+      }
+
+      .botao-sair {
+        padding: 8px 12px;
+      }
+
+      .boas-vindas h2 {
+        font-size: 27px;
+      }
+
+      .resumo-paciente {
+        grid-template-columns: 1fr;
+
+        gap: 11px;
+
+        margin-bottom: 32px;
+      }
+
+      .acao-card {
+        min-height: 100px;
+
+        padding: 16px;
+      }
+
+    }
+
 
     @media(max-width: 450px) {
 
       .duas-colunas {
         grid-template-columns: 1fr;
+
         gap: 0;
       }
 
       .marca h1 {
         font-size: 23px;
       }
+
     }
+
   </style>
+
 </head>
+
 
 <body>
 
-<div class="pagina">
 
-  <!-- APRESENTAÇÃO -->
+<!-- ==========================================
+     LOGIN E CADASTRO
+========================================== -->
+
+<div
+  class="pagina"
+  id="paginaAcesso"
+>
+
+  <!-- LADO ESQUERDO -->
 
   <section class="apresentacao">
 
     <div class="marca">
-      <div class="logo">🌿</div>
+
+      <div class="logo">
+        🌿
+      </div>
 
       <div>
-        <h1>FERRANCO</h1>
-        <span>NUTRIÇÃO & SAÚDE</span>
+
+        <h1>
+          FERRANCO
+        </h1>
+
+        <span>
+          NUTRIÇÃO & SAÚDE
+        </span>
+
       </div>
+
     </div>
 
+
     <h2>
+
       Seu acompanhamento,
-      <strong>todos os dias.</strong>
+
+      <strong>
+        todos os dias.
+      </strong>
+
     </h2>
 
+
     <p>
-      Registre suas refeições, acompanhe sua evolução
-      e mantenha suas informações organizadas durante
-      todo o seu acompanhamento.
+
+      Registre suas refeições,
+      acompanhe sua evolução e
+      mantenha suas informações
+      organizadas durante todo o
+      seu acompanhamento.
+
     </p>
+
 
     <div class="beneficios">
 
@@ -393,24 +993,39 @@
 
   </section>
 
-  <!-- ÁREA LOGIN -->
+
+  <!-- ÁREA DIREITA -->
 
   <section class="area-login">
 
+
     <!-- LOGIN -->
 
-    <div class="card" id="telaLogin">
+    <div
+      class="card"
+      id="telaLogin"
+    >
 
-      <h2>Bem-vindo!</h2>
+      <h2>
+        Bem-vindo!
+      </h2>
 
       <p class="subtitulo">
         Entre para acessar seu acompanhamento.
       </p>
 
-      <div id="mensagemLogin" class="mensagem"></div>
+
+      <div
+        id="mensagemLogin"
+        class="mensagem"
+      ></div>
+
 
       <div class="campo">
-        <label>CPF</label>
+
+        <label>
+          CPF
+        </label>
 
         <input
           type="text"
@@ -418,142 +1033,578 @@
           placeholder="000.000.000-00"
           maxlength="14"
         >
+
       </div>
 
+
       <div class="campo">
-        <label>Senha</label>
+
+        <label>
+          Senha
+        </label>
 
         <input
           type="password"
           id="loginSenha"
           placeholder="Digite sua senha"
         >
+
       </div>
 
-      <button class="botao" onclick="entrar()">
+
+      <button
+        class="botao"
+        onclick="entrar()"
+      >
+
         Entrar
+
       </button>
+
 
       <div class="links">
 
-        <button onclick="abrirCadastro()">
+        <button
+          onclick="abrirCadastro()"
+        >
+
           Primeiro cadastro
+
         </button>
 
         <br>
 
-        <button class="esqueci" onclick="esqueciSenha()">
+        <button
+          class="esqueci"
+          onclick="esqueciSenha()"
+        >
+
           Esqueci minha senha
+
         </button>
 
       </div>
 
     </div>
 
-    <!-- PRIMEIRO CADASTRO -->
 
-    <div class="card" id="telaCadastro">
+    <!-- CADASTRO -->
 
-      <button class="voltar" onclick="voltarLogin()">
+    <div
+      class="card"
+      id="telaCadastro"
+    >
+
+      <button
+        class="voltar"
+        onclick="voltarLogin()"
+      >
+
         ← Voltar
+
       </button>
 
-      <h2>Primeiro cadastro</h2>
+
+      <h2>
+        Primeiro cadastro
+      </h2>
+
 
       <p class="subtitulo">
-        Preencha seus dados para criar seu acesso.
+
+        Preencha seus dados
+        para criar seu acesso.
+
       </p>
 
-      <div id="mensagemCadastro" class="mensagem"></div>
+
+      <div
+        id="mensagemCadastro"
+        class="mensagem"
+      ></div>
+
 
       <div class="campo">
-        <label>Nome completo</label>
-        <input type="text" id="cadNome">
+
+        <label>
+          Nome completo
+        </label>
+
+        <input
+          type="text"
+          id="cadNome"
+        >
+
       </div>
 
-      <div class="campo">
-        <label>Data de nascimento</label>
-        <input type="date" id="cadNascimento">
-      </div>
 
       <div class="campo">
-        <label>CPF</label>
+
+        <label>
+          Data de nascimento
+        </label>
+
+        <input
+          type="date"
+          id="cadNascimento"
+        >
+
+      </div>
+
+
+      <div class="campo">
+
+        <label>
+          CPF
+        </label>
+
         <input
           type="text"
           id="cadCpf"
           maxlength="14"
           placeholder="000.000.000-00"
         >
+
       </div>
 
+
       <div class="campo">
-        <label>E-mail</label>
+
+        <label>
+          E-mail
+        </label>
+
         <input
           type="email"
           id="cadEmail"
           placeholder="seuemail@exemplo.com"
         >
+
       </div>
+
 
       <div class="duas-colunas">
 
+
         <div class="campo">
-          <label>Peso atual (kg)</label>
+
+          <label>
+            Peso atual (kg)
+          </label>
+
           <input
             type="number"
             id="cadPeso"
             step="0.1"
             placeholder="Ex.: 70"
           >
+
         </div>
 
+
         <div class="campo">
-          <label>Altura (cm)</label>
+
+          <label>
+            Altura (cm)
+          </label>
+
           <input
             type="number"
             id="cadAltura"
             placeholder="Ex.: 170"
           >
+
         </div>
+
 
       </div>
 
+
       <div class="campo">
-        <label>Crie sua senha</label>
+
+        <label>
+          Crie sua senha
+        </label>
+
         <input
           type="password"
           id="cadSenha"
           placeholder="Mínimo 6 caracteres"
         >
+
       </div>
 
+
       <p class="termos">
-        Ao criar seu cadastro, você declara que as
-        informações fornecidas são verdadeiras e serão
-        utilizadas para seu acompanhamento.
+
+        Ao criar seu cadastro,
+        você declara que as informações
+        fornecidas são verdadeiras e
+        serão utilizadas para seu
+        acompanhamento.
+
       </p>
 
-      <button class="botao" onclick="cadastrar()">
+
+      <button
+        class="botao"
+        onclick="cadastrar()"
+      >
+
         Criar minha conta
+
       </button>
 
+
     </div>
+
 
   </section>
 
 </div>
 
+
+
+<!-- ==========================================
+     HOME DO PACIENTE
+========================================== -->
+
+<section id="telaPaciente">
+
+
+  <!-- TOPO -->
+
+  <header class="topo-paciente">
+
+
+    <div class="marca-home">
+
+      <div class="logo-home">
+        🌿
+      </div>
+
+      <div>
+
+        <h1>
+          FERRANCO
+        </h1>
+
+        <span>
+          NUTRIÇÃO & SAÚDE
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="botao-sair"
+      onclick="sair()"
+    >
+
+      Sair
+
+    </button>
+
+
+  </header>
+
+
+
+  <!-- CONTEÚDO -->
+
+  <main class="conteudo-paciente">
+
+
+    <div class="boas-vindas">
+
+      <p>
+        Olá,
+      </p>
+
+      <h2 id="nomePaciente">
+        Paciente
+      </h2>
+
+      <span>
+        Continue cuidando da sua evolução. 🌿
+      </span>
+
+    </div>
+
+
+
+    <!-- RESUMO -->
+
+    <div class="resumo-paciente">
+
+
+      <div class="resumo-card">
+
+        <div class="icone-resumo">
+          ⚖️
+        </div>
+
+        <div>
+
+          <small>
+            Peso atual
+          </small>
+
+          <strong id="pesoPaciente">
+            -- kg
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="resumo-card">
+
+        <div class="icone-resumo">
+          💚
+        </div>
+
+        <div>
+
+          <small>
+            Acompanhamento
+          </small>
+
+          <strong>
+            Ativo
+          </strong>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+
+    <h3 class="titulo-acoes">
+
+      O que você deseja fazer?
+
+    </h3>
+
+
+
+    <!-- OPÇÕES -->
+
+    <div class="acoes-paciente">
+
+
+      <!-- REFEIÇÃO -->
+
+      <button
+        class="acao-card"
+        onclick="abrirFuncao(
+          '🍽️',
+          'Registrar refeição',
+          'Aqui você poderá enviar a foto da refeição, informar o tipo da refeição, o peso da comida e adicionar observações.'
+        )"
+      >
+
+        <span class="icone-acao">
+          🍽️
+        </span>
+
+        <span class="texto-acao">
+
+          <strong>
+            Registrar refeição
+          </strong>
+
+          <small>
+            Envie a foto e as informações da sua refeição.
+          </small>
+
+        </span>
+
+        <span class="seta-acao">
+          ›
+        </span>
+
+      </button>
+
+
+
+      <!-- PESAGEM -->
+
+      <button
+        class="acao-card"
+        onclick="abrirFuncao(
+          '⚖️',
+          'Peso semanal',
+          'Aqui você poderá registrar seu peso semanal e enviar a foto da balança.'
+        )"
+      >
+
+        <span class="icone-acao">
+          ⚖️
+        </span>
+
+        <span class="texto-acao">
+
+          <strong>
+            Peso semanal
+          </strong>
+
+          <small>
+            Registre seu peso e envie a foto da balança.
+          </small>
+
+        </span>
+
+        <span class="seta-acao">
+          ›
+        </span>
+
+      </button>
+
+
+
+      <!-- CARDÁPIO -->
+
+      <button
+        class="acao-card"
+        onclick="abrirFuncao(
+          '🥗',
+          'Meu cardápio',
+          'Aqui ficará disponível o seu plano alimentar enviado pelo profissional.'
+        )"
+      >
+
+        <span class="icone-acao">
+          🥗
+        </span>
+
+        <span class="texto-acao">
+
+          <strong>
+            Meu cardápio
+          </strong>
+
+          <small>
+            Consulte seu plano alimentar.
+          </small>
+
+        </span>
+
+        <span class="seta-acao">
+          ›
+        </span>
+
+      </button>
+
+
+
+      <!-- EVOLUÇÃO -->
+
+      <button
+        class="acao-card"
+        onclick="abrirFuncao(
+          '📈',
+          'Minha evolução',
+          'Aqui você poderá acompanhar seu histórico de peso, refeições e evolução durante o acompanhamento.'
+        )"
+      >
+
+        <span class="icone-acao">
+          📈
+        </span>
+
+        <span class="texto-acao">
+
+          <strong>
+            Minha evolução
+          </strong>
+
+          <small>
+            Acompanhe seus registros e seu progresso.
+          </small>
+
+        </span>
+
+        <span class="seta-acao">
+          ›
+        </span>
+
+      </button>
+
+
+    </div>
+
+
+  </main>
+
+
+</section>
+
+
+
+<!-- ==========================================
+     MODAL
+========================================== -->
+
+<div
+  class="modal-fundo"
+  id="modalFuncao"
+>
+
+
+  <div class="modal">
+
+
+    <div
+      class="modal-icone"
+      id="modalIcone"
+    >
+      🌿
+    </div>
+
+
+    <h3 id="modalTitulo">
+      Ferranco
+    </h3>
+
+
+    <p id="modalTexto">
+      Em desenvolvimento.
+    </p>
+
+
+    <button onclick="fecharModal()">
+      Entendi
+    </button>
+
+
+  </div>
+
+
+</div>
+
+
+
 <script>
 
+
   /* ==========================================
-     CONEXÃO COM SUPABASE
+     SUPABASE
   ========================================== */
 
   const SUPABASE_URL =
     "https://mfkpovemmolittpmzzoa.supabase.co";
 
+
   const SUPABASE_KEY =
     "sb_publishable_-aOKKHDBIVdoqHRUFhB0tg_WlqTyoU9";
+
 
   const supabaseClient =
     supabase.createClient(
@@ -562,28 +1613,47 @@
     );
 
 
+
   /* ==========================================
-     TROCA DE TELAS
+     TROCA LOGIN / CADASTRO
   ========================================== */
 
   function abrirCadastro() {
 
-    document.getElementById("telaLogin").style.display =
+    limparMensagem("mensagemLogin");
+
+    document
+      .getElementById("telaLogin")
+      .style.display =
       "none";
 
-    document.getElementById("telaCadastro").style.display =
+
+    document
+      .getElementById("telaCadastro")
+      .style.display =
       "block";
+
   }
+
 
 
   function voltarLogin() {
 
-    document.getElementById("telaCadastro").style.display =
+    limparMensagem("mensagemCadastro");
+
+    document
+      .getElementById("telaCadastro")
+      .style.display =
       "none";
 
-    document.getElementById("telaLogin").style.display =
+
+    document
+      .getElementById("telaLogin")
+      .style.display =
       "block";
+
   }
+
 
 
   /* ==========================================
@@ -591,51 +1661,99 @@
   ========================================== */
 
   function somenteNumeros(valor) {
-    return valor.replace(/\D/g, "");
+
+    return String(valor || "")
+      .replace(/\D/g, "");
+
   }
+
 
 
   function formatarCPF(valor) {
 
-    valor = somenteNumeros(valor).slice(0, 11);
+    valor =
+      somenteNumeros(valor)
+      .slice(0, 11);
 
-    valor = valor.replace(
-      /(\d{3})(\d)/,
-      "$1.$2"
-    );
 
-    valor = valor.replace(
-      /(\d{3})(\d)/,
-      "$1.$2"
-    );
+    valor =
+      valor.replace(
+        /(\d{3})(\d)/,
+        "$1.$2"
+      );
 
-    valor = valor.replace(
-      /(\d{3})(\d{1,2})$/,
-      "$1-$2"
-    );
+
+    valor =
+      valor.replace(
+        /(\d{3})(\d)/,
+        "$1.$2"
+      );
+
+
+    valor =
+      valor.replace(
+        /(\d{3})(\d{1,2})$/,
+        "$1-$2"
+      );
+
 
     return valor;
+
   }
+
 
 
   document
     .getElementById("loginCpf")
-    .addEventListener("input", function () {
+    .addEventListener(
+      "input",
+      function () {
 
-      this.value =
-        formatarCPF(this.value);
+        this.value =
+          formatarCPF(
+            this.value
+          );
 
-    });
+      }
+    );
+
 
 
   document
     .getElementById("cadCpf")
-    .addEventListener("input", function () {
+    .addEventListener(
+      "input",
+      function () {
 
-      this.value =
-        formatarCPF(this.value);
+        this.value =
+          formatarCPF(
+            this.value
+          );
 
-    });
+      }
+    );
+
+
+
+  /* ENTER NO LOGIN */
+
+  document
+    .getElementById("loginSenha")
+    .addEventListener(
+      "keydown",
+      function (evento) {
+
+        if (
+          evento.key === "Enter"
+        ) {
+
+          entrar();
+
+        }
+
+      }
+    );
+
 
 
   /* ==========================================
@@ -649,48 +1767,96 @@
   ) {
 
     const box =
-      document.getElementById(elemento);
+      document.getElementById(
+        elemento
+      );
+
 
     box.className =
       "mensagem " + tipo;
 
+
     box.innerText =
       texto;
+
   }
 
 
+
+  function limparMensagem(
+    elemento
+  ) {
+
+    const box =
+      document.getElementById(
+        elemento
+      );
+
+
+    box.className =
+      "mensagem";
+
+
+    box.innerText =
+      "";
+
+  }
+
+
+
   /* ==========================================
-     PRIMEIRO CADASTRO
+     CADASTRO
   ========================================== */
 
   async function cadastrar() {
 
+
     const nome =
-      document.getElementById("cadNome")
-      .value.trim();
+      document
+        .getElementById("cadNome")
+        .value
+        .trim();
+
 
     const nascimento =
-      document.getElementById("cadNascimento")
-      .value;
+      document
+        .getElementById("cadNascimento")
+        .value;
+
 
     const cpf =
       somenteNumeros(
-        document.getElementById("cadCpf").value
+        document
+          .getElementById("cadCpf")
+          .value
       );
 
+
     const email =
-      document.getElementById("cadEmail")
-      .value.trim()
-      .toLowerCase();
+      document
+        .getElementById("cadEmail")
+        .value
+        .trim()
+        .toLowerCase();
+
 
     const peso =
-      document.getElementById("cadPeso").value;
+      document
+        .getElementById("cadPeso")
+        .value;
+
 
     const altura =
-      document.getElementById("cadAltura").value;
+      document
+        .getElementById("cadAltura")
+        .value;
+
 
     const senha =
-      document.getElementById("cadSenha").value;
+      document
+        .getElementById("cadSenha")
+        .value;
+
 
 
     if (
@@ -710,10 +1876,14 @@
       );
 
       return;
+
     }
 
 
-    if (cpf.length !== 11) {
+
+    if (
+      cpf.length !== 11
+    ) {
 
       mostrarMensagem(
         "mensagemCadastro",
@@ -722,10 +1892,14 @@
       );
 
       return;
+
     }
 
 
-    if (senha.length < 6) {
+
+    if (
+      senha.length < 6
+    ) {
 
       mostrarMensagem(
         "mensagemCadastro",
@@ -734,48 +1908,71 @@
       );
 
       return;
+
     }
+
+
+
+    mostrarMensagem(
+      "mensagemCadastro",
+      "Criando sua conta...",
+      "sucesso"
+    );
+
 
 
     try {
 
-      /* CRIA USUÁRIO NO AUTH */
+
+      /* CRIA LOGIN */
 
       const {
         data,
         error
       } =
-        await supabaseClient.auth.signUp({
+        await supabaseClient
+          .auth
+          .signUp({
 
-          email: email,
+            email: email,
 
-          password: senha,
+            password: senha,
 
-          options: {
+            options: {
 
-            data: {
-              cpf: cpf,
-              nome: nome
+              data: {
+
+                cpf: cpf,
+
+                nome: nome
+
+              }
+
             }
 
-          }
+          });
 
-        });
 
 
       if (error) {
+
         throw error;
+
       }
+
 
 
       if (!data.user) {
+
         throw new Error(
           "Não foi possível criar o usuário."
         );
+
       }
 
 
-      /* SALVA PACIENTE */
+
+      /* CRIA PACIENTE */
 
       const {
         error: erroPaciente
@@ -784,15 +1981,20 @@
           .from("pacientes")
           .insert({
 
-            user_id: data.user.id,
+            user_id:
+              data.user.id,
 
-            nome_completo: nome,
+            nome_completo:
+              nome,
 
-            cpf: cpf,
+            cpf:
+              cpf,
 
-            data_nascimento: nascimento,
+            data_nascimento:
+              nascimento,
 
-            email: email,
+            email:
+              email,
 
             peso_inicial:
               Number(peso),
@@ -803,162 +2005,706 @@
           });
 
 
+
       if (erroPaciente) {
+
         throw erroPaciente;
+
       }
+
 
 
       mostrarMensagem(
         "mensagemCadastro",
-        "Cadastro realizado com sucesso! Você já pode acessar sua conta.",
+        "Cadastro realizado com sucesso!",
         "sucesso"
       );
 
 
+
+      /*
+        Como a confirmação de e-mail
+        foi desativada, o usuário já
+        deve possuir uma sessão.
+      */
+
       setTimeout(
-        voltarLogin,
-        1800
+        async function () {
+
+          await abrirAreaPaciente();
+
+        },
+        900
       );
+
 
     }
 
     catch (erro) {
 
-      console.error(erro);
+
+      console.error(
+        "Erro no cadastro:",
+        erro
+      );
+
+
+      let mensagem =
+        erro.message ||
+        "Não foi possível realizar o cadastro.";
+
+
+      if (
+        mensagem
+          .toLowerCase()
+          .includes("already")
+      ) {
+
+        mensagem =
+          "Já existe uma conta cadastrada com essas informações.";
+
+      }
+
 
       mostrarMensagem(
         "mensagemCadastro",
-        erro.message ||
-        "Não foi possível realizar o cadastro.",
+        mensagem,
         "erro"
       );
+
 
     }
 
   }
+
 
 
   /* ==========================================
-     LOGIN
+     LOGIN CPF + SENHA
   ========================================== */
-async function entrar() {
 
-  const cpf = somenteNumeros(
-    document.getElementById("loginCpf").value
-  );
+  async function entrar() {
 
-  const senha =
-    document.getElementById("loginSenha").value;
 
-  if (cpf.length !== 11 || !senha) {
+    const cpf =
+      somenteNumeros(
+        document
+          .getElementById("loginCpf")
+          .value
+      );
+
+
+    const senha =
+      document
+        .getElementById("loginSenha")
+        .value;
+
+
+
+    if (
+      cpf.length !== 11 ||
+      !senha
+    ) {
+
+      mostrarMensagem(
+        "mensagemLogin",
+        "Informe seu CPF e sua senha.",
+        "erro"
+      );
+
+      return;
+
+    }
+
+
 
     mostrarMensagem(
       "mensagemLogin",
-      "Informe seu CPF e sua senha.",
-      "erro"
-    );
-
-    return;
-  }
-
-  mostrarMensagem(
-    "mensagemLogin",
-    "Entrando...",
-    "sucesso"
-  );
-
-  try {
-
-    // Busca o e-mail vinculado ao CPF
-    const { data: email, error: erroCpf } =
-      await supabaseClient.rpc(
-        "buscar_email_login_cpf",
-        {
-          p_cpf: cpf
-        }
-      );
-
-    if (erroCpf) {
-      throw erroCpf;
-    }
-
-    if (!email) {
-
-      mostrarMensagem(
-        "mensagemLogin",
-        "CPF ou senha incorretos.",
-        "erro"
-      );
-
-      return;
-    }
-
-    // Faz o login no Supabase
-    const { data, error: erroLogin } =
-      await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: senha
-      });
-
-    if (erroLogin) {
-
-      mostrarMensagem(
-        "mensagemLogin",
-        "CPF ou senha incorretos.",
-        "erro"
-      );
-
-      return;
-    }
-
-    if (!data.user) {
-
-      mostrarMensagem(
-        "mensagemLogin",
-        "Não foi possível acessar sua conta.",
-        "erro"
-      );
-
-      return;
-    }
-
-    mostrarMensagem(
-      "mensagemLogin",
-      "Login realizado com sucesso!",
+      "Entrando...",
       "sucesso"
     );
 
-    console.log("Usuário conectado:", data.user.id);
 
-  } catch (erro) {
 
-    console.error(erro);
+    try {
 
-    mostrarMensagem(
-      "mensagemLogin",
-      "Não foi possível realizar o login. Tente novamente.",
-      "erro"
+
+      /*
+        BUSCA E-MAIL DO CPF
+        através da função RPC
+        que já criamos no Supabase.
+      */
+
+      const {
+        data: email,
+        error: erroCpf
+      } =
+        await supabaseClient
+          .rpc(
+            "buscar_email_login_cpf",
+            {
+              p_cpf: cpf
+            }
+          );
+
+
+
+      if (erroCpf) {
+
+        throw erroCpf;
+
+      }
+
+
+
+      if (!email) {
+
+        mostrarMensagem(
+          "mensagemLogin",
+          "CPF ou senha incorretos.",
+          "erro"
+        );
+
+        return;
+
+      }
+
+
+
+      /* LOGIN */
+
+      const {
+        data,
+        error: erroLogin
+      } =
+        await supabaseClient
+          .auth
+          .signInWithPassword({
+
+            email: email,
+
+            password: senha
+
+          });
+
+
+
+      if (
+        erroLogin ||
+        !data.user
+      ) {
+
+        mostrarMensagem(
+          "mensagemLogin",
+          "CPF ou senha incorretos.",
+          "erro"
+        );
+
+        return;
+
+      }
+
+
+
+      /* ABRE O APP */
+
+      await abrirAreaPaciente();
+
+
+    }
+
+    catch (erro) {
+
+
+      console.error(
+        "Erro no login:",
+        erro
+      );
+
+
+      mostrarMensagem(
+        "mensagemLogin",
+        "Não foi possível realizar o login. Tente novamente.",
+        "erro"
+      );
+
+
+    }
+
+  }
+
+
+
+  /* ==========================================
+     ABRIR ÁREA DO PACIENTE
+  ========================================== */
+
+  async function abrirAreaPaciente() {
+
+
+    try {
+
+
+      const {
+        data: {
+          user
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getUser();
+
+
+
+      if (!user) {
+
+        mostrarTelaAcesso();
+
+        return;
+
+      }
+
+
+
+      const {
+        data: paciente,
+        error
+      } =
+        await supabaseClient
+          .from("pacientes")
+          .select(
+            "nome_completo, peso_inicial"
+          )
+          .eq(
+            "user_id",
+            user.id
+          )
+          .single();
+
+
+
+      if (
+        error ||
+        !paciente
+      ) {
+
+
+        console.error(
+          "Erro ao carregar paciente:",
+          error
+        );
+
+
+        mostrarTelaAcesso();
+
+
+        mostrarMensagem(
+          "mensagemLogin",
+          "Seu login foi realizado, mas não conseguimos carregar seu cadastro.",
+          "erro"
+        );
+
+
+        return;
+
+      }
+
+
+
+      /* NOME */
+
+      const primeiroNome =
+        paciente
+          .nome_completo
+          .trim()
+          .split(" ")[0];
+
+
+
+      const nomeFormatado =
+        primeiroNome
+          .charAt(0)
+          .toUpperCase() +
+
+        primeiroNome
+          .slice(1)
+          .toLowerCase();
+
+
+
+      document
+        .getElementById(
+          "nomePaciente"
+        )
+        .textContent =
+        nomeFormatado;
+
+
+
+      /* PESO */
+
+      document
+        .getElementById(
+          "pesoPaciente"
+        )
+        .textContent =
+        paciente.peso_inicial
+          ? formatarPeso(
+              paciente.peso_inicial
+            )
+          : "-- kg";
+
+
+
+      /* MOSTRA APP */
+
+      document
+        .getElementById(
+          "paginaAcesso"
+        )
+        .style.display =
+        "none";
+
+
+      document
+        .getElementById(
+          "telaPaciente"
+        )
+        .style.display =
+        "block";
+
+
+      window.scrollTo(
+        0,
+        0
+      );
+
+
+    }
+
+    catch (erro) {
+
+
+      console.error(
+        "Erro ao abrir área do paciente:",
+        erro
+      );
+
+
+      mostrarTelaAcesso();
+
+
+    }
+
+  }
+
+
+
+  /* ==========================================
+     FORMATAR PESO
+  ========================================== */
+
+  function formatarPeso(
+    peso
+  ) {
+
+
+    const numero =
+      Number(peso);
+
+
+    if (
+      Number.isNaN(numero)
+    ) {
+
+      return "-- kg";
+
+    }
+
+
+    return (
+      numero.toLocaleString(
+        "pt-BR",
+        {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2
+        }
+      )
+      +
+      " kg"
     );
 
   }
 
-}
-  
+
+
   /* ==========================================
-     ESQUECI A SENHA
+     SAIR
+  ========================================== */
+
+  async function sair() {
+
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+
+    document
+      .getElementById(
+        "telaPaciente"
+      )
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById(
+        "paginaAcesso"
+      )
+      .style.display =
+      "";
+
+
+    document
+      .getElementById(
+        "telaCadastro"
+      )
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById(
+        "telaLogin"
+      )
+      .style.display =
+      "block";
+
+
+    document
+      .getElementById(
+        "loginSenha"
+      )
+      .value =
+      "";
+
+
+    limparMensagem(
+      "mensagemLogin"
+    );
+
+
+    window.scrollTo(
+      0,
+      0
+    );
+
+  }
+
+
+
+  function mostrarTelaAcesso() {
+
+
+    document
+      .getElementById(
+        "telaPaciente"
+      )
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById(
+        "paginaAcesso"
+      )
+      .style.display =
+      "";
+
+
+    document
+      .getElementById(
+        "telaCadastro"
+      )
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById(
+        "telaLogin"
+      )
+      .style.display =
+      "block";
+
+  }
+
+
+
+  /* ==========================================
+     OPÇÕES DA HOME
+  ========================================== */
+
+  function abrirFuncao(
+    icone,
+    titulo,
+    texto
+  ) {
+
+
+    document
+      .getElementById(
+        "modalIcone"
+      )
+      .textContent =
+      icone;
+
+
+    document
+      .getElementById(
+        "modalTitulo"
+      )
+      .textContent =
+      titulo;
+
+
+    document
+      .getElementById(
+        "modalTexto"
+      )
+      .textContent =
+      texto;
+
+
+    document
+      .getElementById(
+        "modalFuncao"
+      )
+      .style.display =
+      "flex";
+
+  }
+
+
+
+  function fecharModal() {
+
+
+    document
+      .getElementById(
+        "modalFuncao"
+      )
+      .style.display =
+      "none";
+
+  }
+
+
+
+  document
+    .getElementById(
+      "modalFuncao"
+    )
+    .addEventListener(
+      "click",
+      function (
+        evento
+      ) {
+
+        if (
+          evento.target === this
+        ) {
+
+          fecharModal();
+
+        }
+
+      }
+    );
+
+
+
+  /* ==========================================
+     ESQUECI SENHA
   ========================================== */
 
   function esqueciSenha() {
 
+
     mostrarMensagem(
       "mensagemLogin",
-      "A recuperação de senha será configurada na próxima etapa.",
+      "A recuperação de senha será configurada em seguida.",
       "sucesso"
     );
 
   }
 
+
+
+  /* ==========================================
+     VERIFICA SESSÃO AO ABRIR SITE
+  ========================================== */
+
+  async function verificarSessao() {
+
+
+    try {
+
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+
+
+      if (
+        session &&
+        session.user
+      ) {
+
+        await abrirAreaPaciente();
+
+      }
+
+      else {
+
+        mostrarTelaAcesso();
+
+      }
+
+
+    }
+
+    catch (erro) {
+
+
+      console.error(
+        "Erro ao verificar sessão:",
+        erro
+      );
+
+
+      mostrarTelaAcesso();
+
+
+    }
+
+  }
+
+
+
+  verificarSessao();
+
+
 </script>
 
+
 </body>
+
 </html>

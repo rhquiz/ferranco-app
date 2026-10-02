@@ -936,6 +936,14 @@
     .foto-admin{width:110px;height:90px;object-fit:cover;border-radius:10px;border:1px solid #ddd;cursor:pointer}
     .grafico-peso{display:flex;align-items:flex-end;gap:8px;height:190px;padding:20px 5px 0;border-bottom:1px solid #ddd;margin-top:15px}.barra-peso{flex:1;min-width:24px;background:#dcebe3;border-radius:8px 8px 0 0;position:relative}.barra-peso span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;margin-bottom:4px;color:#315d4c}.barra-peso small{position:absolute;top:100%;left:50%;transform:translateX(-50%);font-size:9px;white-space:nowrap;margin-top:5px;color:#777}
     @media(max-width:700px){.admin-stats,.ficha-resumo{grid-template-columns:1fr}.admin-head,.admin-toolbar,.admin-item{align-items:stretch;flex-direction:column}.admin-btn{width:100%}.foto-admin{width:100%;height:180px}}
+    .badge.aguardando{background:#fff3d7;color:#8a6515}
+    .badge.inativo{background:#fdecec;color:#a32d2d}
+    .filtros-pacientes{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+    .filtros-pacientes button{border:1px solid #c9d8d0;background:#fff;color:var(--verde-escuro);padding:8px 12px;border-radius:9px;font-weight:600;cursor:pointer}
+    .filtros-pacientes button.ativo{background:var(--verde);color:#fff}
+    .modal-foto-admin{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:25px}
+    .modal-foto-admin img{max-width:min(1000px,95vw);max-height:88vh;object-fit:contain;border-radius:14px;background:#fff}
+    .modal-foto-admin button{position:absolute;top:18px;right:20px;border:0;background:#fff;color:#222;border-radius:999px;width:42px;height:42px;font-size:22px;cursor:pointer}
 
   </style>
 
@@ -1594,6 +1602,11 @@
      MODAL
 ========================================== -->
 
+<div id="modalFotoAdmin" class="modal-foto-admin" onclick="fecharFotoGrande(event)">
+  <button type="button" onclick="fecharFotoGrande()">×</button>
+  <img id="imagemFotoAdminGrande" alt="Foto ampliada">
+</div>
+
 <div
   class="modal-fundo"
   id="modalFuncao"
@@ -2042,7 +2055,13 @@
               Number(peso),
 
             altura_cm:
-              Number(altura)
+              Number(altura),
+
+            situacao:
+              "AGUARDANDO",
+
+            ativo:
+              false
 
           });
 
@@ -2070,13 +2089,12 @@
         deve possuir uma sessão.
       */
 
-      setTimeout(
-        async function () {
+      await supabaseClient.auth.signOut();
 
-          await abrirAreaPaciente();
-
-        },
-        900
+      mostrarMensagem(
+        "mensagemCadastro",
+        "Cadastro realizado! Agora aguarde a ativação do seu acompanhamento pelo Dr. Elton.",
+        "sucesso"
       );
 
 
@@ -2315,7 +2333,7 @@
         await supabaseClient
           .from("pacientes")
           .select(
-            "nome_completo, peso_inicial"
+            "nome_completo, peso_inicial, ativo, situacao"
           )
           .eq(
             "user_id",
@@ -2351,6 +2369,28 @@
 
       }
 
+
+
+      /* CONTROLE DE ACESSO DO PACIENTE */
+
+      if (paciente.situacao !== "ATIVO" || paciente.ativo !== true) {
+
+        const situacao = paciente.situacao || "AGUARDANDO";
+
+        await supabaseClient.auth.signOut();
+
+        mostrarTelaAcesso();
+
+        mostrarMensagem(
+          "mensagemLogin",
+          situacao === "INATIVO"
+            ? "Seu acompanhamento está inativo. Entre em contato com a Ferranco para reativar seu acesso."
+            : "Seu cadastro foi realizado e está aguardando ativação pelo Dr. Elton.",
+          "erro"
+        );
+
+        return;
+      }
 
 
       /* NOME */
@@ -2678,7 +2718,7 @@
   async function atualizarDashboardAdmin(){
     try{
       const [{count:pc},{count:rc},{count:wc}]=await Promise.all([
-        supabaseClient.from('pacientes').select('*',{count:'exact',head:true}).eq('ativo',true),
+        supabaseClient.from('pacientes').select('*',{count:'exact',head:true}).eq('situacao','ATIVO').eq('ativo',true),
         supabaseClient.from('refeicoes').select('*',{count:'exact',head:true}).eq('status_avaliacao','PENDENTE'),
         supabaseClient.from('pesagens').select('*',{count:'exact',head:true}).eq('status_avaliacao','PENDENTE')
       ]);
@@ -2692,9 +2732,11 @@
     marcarNavAdmin(tipo);const box=document.getElementById('adminConteudo');box.innerHTML='Carregando...';
     try{
       if(tipo==='pacientes'){
-        const {data,error}=await supabaseClient.from('pacientes').select('id,nome_completo,cpf,email,peso_inicial,altura_cm,ativo').eq('ativo',true).order('nome_completo');if(error)throw error;
-        box.innerHTML=`<div class="admin-toolbar"><div><h3>Pacientes</h3><small>${data?.length||0} paciente(s) ativo(s)</small></div><input id="buscaPacienteAdmin" placeholder="Pesquisar por nome ou CPF" oninput="filtrarPacientesAdmin()"></div><div class="admin-lista" id="listaPacientesAdmin">${(data||[]).map(p=>cartaoPacienteAdmin(p)).join('')||'<p>Nenhum paciente cadastrado.</p>'}</div>`;
-        window._pacientesAdmin=data||[];return;
+        const {data,error}=await supabaseClient.from('pacientes').select('id,nome_completo,cpf,email,peso_inicial,altura_cm,ativo,situacao').order('nome_completo');if(error)throw error;
+        window._pacientesAdmin=data||[];
+        window._filtroSituacaoAdmin='TODOS';
+        box.innerHTML=`<div class="admin-toolbar"><div><h3>Pacientes</h3><small>${data?.length||0} paciente(s) cadastrado(s)</small></div><input id="buscaPacienteAdmin" placeholder="Pesquisar por nome ou CPF" oninput="filtrarPacientesAdmin()"></div><div class="filtros-pacientes"><button class="ativo" data-status="TODOS" onclick="definirFiltroPacienteAdmin('TODOS',this)">Todos</button><button data-status="ATIVO" onclick="definirFiltroPacienteAdmin('ATIVO',this)">🟢 Ativos</button><button data-status="AGUARDANDO" onclick="definirFiltroPacienteAdmin('AGUARDANDO',this)">🟡 Aguardando ativação</button><button data-status="INATIVO" onclick="definirFiltroPacienteAdmin('INATIVO',this)">🔴 Inativos</button></div><div class="admin-lista" id="listaPacientesAdmin">${(data||[]).map(p=>cartaoPacienteAdmin(p)).join('')||'<p>Nenhum paciente cadastrado.</p>'}</div>`;
+        return;
       }
       const tabela=tipo==='refeicoes'?'refeicoes':'pesagens';
       const campos=tipo==='refeicoes'?'id,paciente_id,data_hora,tipo_refeicao,peso_comida_gramas,foto_path,observacao_paciente,status_avaliacao':'id,paciente_id,data_pesagem,peso_kg,foto_path,observacao_paciente,status_avaliacao';
@@ -2705,8 +2747,39 @@
     }catch(e){console.error(e);box.innerHTML='<p>Não foi possível carregar esta área.</p>'}
   }
 
-  function cartaoPacienteAdmin(p){return `<div class="admin-item paciente-admin-item" data-busca="${esc((p.nome_completo||'')+' '+(p.cpf||''))}"><div class="admin-item-info"><strong>${esc(p.nome_completo)}</strong><small>CPF: ${formatarCPF(p.cpf||'')} • Peso inicial: ${formatarPeso(p.peso_inicial)}</small></div><button class="admin-btn" onclick="abrirFichaPaciente('${p.id}')">Abrir ficha</button></div>`}
-  function filtrarPacientesAdmin(){const q=(document.getElementById('buscaPacienteAdmin').value||'').toLowerCase();document.querySelectorAll('.paciente-admin-item').forEach(e=>e.style.display=(e.dataset.busca||'').toLowerCase().includes(q)?'flex':'none')}
+  function cartaoPacienteAdmin(p){
+    const st=p.situacao||((p.ativo===true)?'ATIVO':'INATIVO');
+    const badge=st==='ATIVO'?'<span class="badge ok">🟢 ATIVO</span>':st==='AGUARDANDO'?'<span class="badge aguardando">🟡 AGUARDANDO</span>':'<span class="badge inativo">🔴 INATIVO</span>';
+    const acao=st==='ATIVO'
+      ? `<button class="admin-btn sec" onclick="alterarSituacaoPaciente('${p.id}','INATIVO')">Desativar</button>`
+      : `<button class="admin-btn" onclick="alterarSituacaoPaciente('${p.id}','ATIVO')">${st==='AGUARDANDO'?'✓ Ativar':'Reativar'}</button>`;
+    return `<div class="admin-item paciente-admin-item" data-status="${st}" data-busca="${esc((p.nome_completo||'')+' '+(p.cpf||''))}"><div class="admin-item-info"><strong>${esc(p.nome_completo)}</strong><small>CPF: ${formatarCPF(p.cpf||'')} • Peso inicial: ${formatarPeso(p.peso_inicial)}</small><div style="margin-top:7px">${badge}</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="admin-btn sec" onclick="abrirFichaPaciente('${p.id}')">Abrir ficha</button>${acao}</div></div>`;
+  }
+  function definirFiltroPacienteAdmin(status,btn){
+    window._filtroSituacaoAdmin=status;
+    document.querySelectorAll('.filtros-pacientes button').forEach(b=>b.classList.remove('ativo'));
+    if(btn)btn.classList.add('ativo');
+    filtrarPacientesAdmin();
+  }
+  function filtrarPacientesAdmin(){
+    const el=document.getElementById('buscaPacienteAdmin');
+    const q=((el&&el.value)||'').toLowerCase();
+    const st=window._filtroSituacaoAdmin||'TODOS';
+    document.querySelectorAll('.paciente-admin-item').forEach(e=>{
+      const okBusca=(e.dataset.busca||'').toLowerCase().includes(q);
+      const okStatus=st==='TODOS'||e.dataset.status===st;
+      e.style.display=(okBusca&&okStatus)?'flex':'none';
+    });
+  }
+  async function alterarSituacaoPaciente(id,novaSituacao){
+    const texto=novaSituacao==='ATIVO'?'ativar este paciente?':'desativar este paciente? Ele não conseguirá acessar o aplicativo.';
+    if(!confirm('Deseja '+texto))return;
+    const {error}=await supabaseClient.rpc('admin_alterar_situacao_paciente',{p_paciente_id:id,p_situacao:novaSituacao});
+    if(error){console.error(error);alert('Não foi possível alterar a situação do paciente.');return}
+    if(adminPacienteAtual&&adminPacienteAtual.id===id){adminPacienteAtual.situacao=novaSituacao;adminPacienteAtual.ativo=novaSituacao==='ATIVO'}
+    await atualizarDashboardAdmin();
+    await abrirPainelAdmin('pacientes');
+  }
   function cartaoRefeicaoAdmin(x,nome){return `<div class="admin-item"><div class="admin-item-info"><strong>${esc(nome||'Paciente')} • ${esc(x.tipo_refeicao)}</strong><small>${new Date(x.data_hora).toLocaleString('pt-BR')}${x.peso_comida_gramas?' • '+x.peso_comida_gramas+' g':''}<br>${esc(x.observacao_paciente||'Sem observação')}</small></div><button class="admin-btn" onclick="abrirFichaPaciente('${x.paciente_id}','refeicoes')">Verificar</button></div>`}
   function cartaoPesagemAdmin(x,nome){return `<div class="admin-item"><div class="admin-item-info"><strong>${esc(nome||'Paciente')} • ${formatarPeso(x.peso_kg)}</strong><small>${dataBR(x.data_pesagem)}<br>${esc(x.observacao_paciente||'Sem observação')}</small></div><button class="admin-btn" onclick="abrirFichaPaciente('${x.paciente_id}','pesagens')">Verificar</button></div>`}
 
@@ -2725,8 +2798,19 @@
   async function salvarCardapioAdmin(){const titulo=document.getElementById('admCardTitulo').value.trim(),descricao=document.getElementById('admCardDescricao').value.trim(),inicio=document.getElementById('admCardInicio').value,fim=document.getElementById('admCardFim').value;if(!titulo||!descricao){alert('Preencha o título e o cardápio.');return}try{await supabaseClient.from('cardapios').update({ativo:false}).eq('paciente_id',adminPacienteAtual.id).eq('ativo',true);const {error}=await supabaseClient.from('cardapios').insert({paciente_id:adminPacienteAtual.id,titulo,descricao,data_inicio:inicio||null,data_fim:fim||null,ativo:true});if(error)throw error;alert('Cardápio salvo e disponibilizado ao paciente!');await carregarCardapioAdmin()}catch(e){console.error(e);alert('Não foi possível salvar o cardápio.')} }
 
   async function carregarRegistrosAdmin(tipo){const box=document.getElementById('fichaConteudo'),ref=tipo==='refeicoes';const campos=ref?'id,data_hora,tipo_refeicao,peso_comida_gramas,foto_path,observacao_paciente,status_avaliacao,observacao_profissional':'id,data_pesagem,peso_kg,foto_path,observacao_paciente,status_avaliacao,observacao_profissional';const ordem=ref?'data_hora':'data_pesagem';const {data,error}=await supabaseClient.from(tipo).select(campos).eq('paciente_id',adminPacienteAtual.id).order(ordem,{ascending:false}).limit(40);if(error)throw error;box.innerHTML=`<h3>${ref?'🍽️ Refeições':'⚖️ Pesagens'}</h3><div class="admin-lista" style="margin-top:16px">${(data||[]).map(x=>registroAdminHTML(tipo,x)).join('')||'<p>Nenhum registro.</p>'}</div>`;for(const x of data||[]){if(x.foto_path)carregarFotoAdmin(x.foto_path,'foto-'+tipo+'-'+x.id)}}
-  function registroAdminHTML(tipo,x){const ref=tipo==='refeicoes',pend=x.status_avaliacao==='PENDENTE',titulo=ref?`${esc(x.tipo_refeicao)}${x.peso_comida_gramas?' • '+x.peso_comida_gramas+' g':''}`:formatarPeso(x.peso_kg),data=ref?new Date(x.data_hora).toLocaleString('pt-BR'):dataBR(x.data_pesagem);return `<div class="admin-item" style="align-items:flex-start"><div>${x.foto_path?`<img id="foto-${tipo}-${x.id}" class="foto-admin" alt="Foto do registro">`:''}</div><div class="admin-item-info" style="flex:1"><strong>${titulo}</strong><small>${data}<br>${esc(x.observacao_paciente||'Sem observação do paciente')}</small><div style="margin-top:8px"><span class="badge ${pend?'pendente':'ok'}">${pend?'PENDENTE':'✓ VERIFICADO'}</span></div>${x.observacao_profissional?`<p style="margin-top:9px;font-size:12px"><strong>Orientação:</strong> ${esc(x.observacao_profissional)}</p>`:''}</div>${pend?`<button class="admin-btn" onclick="verificarRegistroAdmin('${tipo}','${x.id}')">✓ Verificar</button>`:''}</div>`}
+  function registroAdminHTML(tipo,x){const ref=tipo==='refeicoes',pend=x.status_avaliacao==='PENDENTE',titulo=ref?`${esc(x.tipo_refeicao)}${x.peso_comida_gramas?' • '+x.peso_comida_gramas+' g':''}`:formatarPeso(x.peso_kg),data=ref?new Date(x.data_hora).toLocaleString('pt-BR'):dataBR(x.data_pesagem);return `<div class="admin-item" style="align-items:flex-start"><div>${x.foto_path?`<img id="foto-${tipo}-${x.id}" class="foto-admin" alt="Foto do registro" title="Clique para ampliar" onclick="abrirFotoGrande(this.src)">`:''}</div><div class="admin-item-info" style="flex:1"><strong>${titulo}</strong><small>${data}<br>${esc(x.observacao_paciente||'Sem observação do paciente')}</small><div style="margin-top:8px"><span class="badge ${pend?'pendente':'ok'}">${pend?'PENDENTE':'✓ VERIFICADO'}</span></div>${x.observacao_profissional?`<p style="margin-top:9px;font-size:12px"><strong>Orientação:</strong> ${esc(x.observacao_profissional)}</p>`:''}</div>${pend?`<button class="admin-btn" onclick="verificarRegistroAdmin('${tipo}','${x.id}')">✓ Verificar</button>`:''}</div>`}
   async function carregarFotoAdmin(path,id){try{const {data,error}=await supabaseClient.storage.from('ferranco-arquivos').createSignedUrl(path,300);if(!error&&data?.signedUrl){const img=document.getElementById(id);if(img)img.src=data.signedUrl}}catch(e){console.error(e)}}
+  function abrirFotoGrande(url){
+    if(!url)return;
+    document.getElementById('imagemFotoAdminGrande').src=url;
+    document.getElementById('modalFotoAdmin').style.display='flex';
+  }
+  function fecharFotoGrande(evento){
+    if(evento && evento.target && evento.target.id!=='modalFotoAdmin')return;
+    document.getElementById('modalFotoAdmin').style.display='none';
+    document.getElementById('imagemFotoAdminGrande').src='';
+  }
+
   async function verificarRegistroAdmin(tipo,id){const obs=prompt('Orientação para o paciente (opcional):','');if(obs===null)return;const {error}=await supabaseClient.from(tipo).update({status_avaliacao:'AVALIADO',avaliado_em:new Date().toISOString(),observacao_profissional:obs.trim()||null}).eq('id',id);if(error){alert('Não foi possível verificar.');console.error(error);return}await atualizarDashboardAdmin();await carregarRegistrosAdmin(tipo)}
 
   async function carregarEvolucaoAdmin(){const box=document.getElementById('fichaConteudo');const {data,error}=await supabaseClient.from('pesagens').select('data_pesagem,peso_kg').eq('paciente_id',adminPacienteAtual.id).order('data_pesagem',{ascending:true});if(error)throw error;const ps=data||[];if(!ps.length){box.innerHTML='<h3>📈 Evolução</h3><p style="margin-top:12px">Ainda não há pesagens suficientes para montar a evolução.</p>';return}const vals=ps.map(x=>Number(x.peso_kg)),min=Math.min(...vals)-1,max=Math.max(...vals)+1,range=Math.max(1,max-min);const barras=ps.slice(-12).map(x=>{const h=35+((Number(x.peso_kg)-min)/range)*120;return `<div class="barra-peso" style="height:${h}px"><span>${Number(x.peso_kg).toLocaleString('pt-BR')} kg</span><small>${dataBR(x.data_pesagem).slice(0,5)}</small></div>`}).join('');const inicial=Number(adminPacienteAtual.peso_inicial||vals[0]),atual=vals[vals.length-1],dif=atual-inicial;box.innerHTML=`<h3>📈 Evolução de peso</h3><p style="margin-top:9px;color:#6d746f">Peso inicial: <strong>${formatarPeso(inicial)}</strong> • Atual: <strong>${formatarPeso(atual)}</strong> • Diferença: <strong>${dif>0?'+':''}${dif.toLocaleString('pt-BR',{maximumFractionDigits:2})} kg</strong></p><div class="grafico-peso">${barras}</div><p style="margin-top:28px;color:#81796e;font-size:12px">Últimas ${Math.min(ps.length,12)} pesagens registradas.</p>`}
